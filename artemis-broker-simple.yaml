@@ -1,0 +1,26 @@
+apiVersion: broker.amq.io/v1beta1
+kind: ActiveMQArtemis
+metadata:
+  name: ha-broker
+  namespace: activemq-artemis-operator
+spec:
+  deploymentPlan:
+    size: 3
+    persistenceEnabled: false
+    messageMigration: true
+    requireLogin: false
+    journalType: nio
+  acceptors:
+    - name: "amqp"
+      expose: true
+      port: 5672
+      protocols: "AMQP"
+      sslEnabled: false
+    - name: "core"
+      protocols: "CORE"
+      port: 61616
+      expose: true
+  addressSettings:
+    addressSetting:
+      - match: "#"
+        redistributionDelay: 1000

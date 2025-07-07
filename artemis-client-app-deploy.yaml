@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: artemis-client
+  namespace: activemq-artemis-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: artemis-client
+  template:
+    metadata:
+      labels:
+        app: artemis-client
+    spec:
+      containers:
+      - name: artemis-client
+        image: harbor.itgix.eu/aviview/artemis-client:v3
+        env:
+        - name: SPRING_ARTEMIS_BROKER_URL
+          value: "(tcp://ha-broker-ss-0.ha-broker-hdls-svc.activemq-artemis-operator.svc.cluster.local:61616,tcp://ha-broker-ss-1.ha-broker-hdls-svc.activemq-artemis-operator.svc.cluster.local:61616,tcp://ha-broker-ss-2.ha-broker-hdls-svc.activemq-artemis-operator.svc.cluster.local:61616)?ha=true&reconnectAttempts=-1"
+        - name: SPRING_ARTEMIS_MODE
+          value: "native"
+        - name: SPRING_ARTEMIS_POOL_ENABLED
+          value: "false"
+      imagePullSecrets:
+      - name: harbor-secret
